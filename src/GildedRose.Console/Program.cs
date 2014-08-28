@@ -4,21 +4,21 @@ namespace GildedRose.Console
 {
     public class Program
     {
-        public IList<ItemWrapper> Items;
+        public IList<Item> Items;
         static void Main()
         {
             System.Console.WriteLine("OMGHAI!");
 
             var app = new Program
                 {
-                              Items = new List<ItemWrapper>
+                              Items = new List<Item>
                                           {
-                                              new ItemWrapper(new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20}),
-                                              new ItemWrapper(new Item {Name = "Aged Brie", SellIn = 2, Quality = 0}),
-                                              new ItemWrapper(new Item {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7}),
-                                              new ItemWrapper(new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80}),
-                                              new ItemWrapper(new Item { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 15, Quality = 20 }),
-                                              new ItemWrapper(new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6})
+                                              new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
+                                              new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
+                                              new Item {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7},
+                                              new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80},
+                                              new Item { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 15, Quality = 20 },
+                                              new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
                                           }
 
                           };
@@ -31,12 +31,12 @@ namespace GildedRose.Console
 
         public void UpdateQuality()
         {
-            foreach (var itemWrapper in Items)
+            foreach (var item in Items)
             {
+                var itemWrapper = new ItemWrapper(item);
                 itemWrapper.ReduceSellin();
                 itemWrapper.UpdateQuality();
 
-                var item = itemWrapper.Item;
                 if (item.SellIn < 0)
                 {
                     if (item.Name != "Aged Brie")
@@ -72,6 +72,16 @@ namespace GildedRose.Console
     {
         void UpdateQuality(Item item);
     }
+
+    public class PastSellinQualityDecreaseStrategy : IReduceQuailityStrategy
+    {
+        public void UpdateQuality(Item item)
+        {
+            if (item.Quality < 50)
+                item.Quality += 1;
+        }
+    }
+
 
     public class IncreaseQuailityWithAgeStrategy : IReduceQuailityStrategy
     {
@@ -151,6 +161,8 @@ namespace GildedRose.Console
                 _reduceQuailityStrategy = new ConjuredReduceQuailityStrategy();
             else
                 _reduceQuailityStrategy = new StandardReduceQuailityStrategy();
+            
+
         }
 
         public void ReduceSellin()

@@ -14,7 +14,7 @@ namespace GildedRose.Tests
             var item = new Item { Name = "Conjured", Quality = 20, SellIn = 10 };
             var subject = new Program
             {
-                Items = new List<ItemWrapper> { new ItemWrapper(item) }
+                Items = new List<Item> { item }
             };
 
             subject.UpdateQuality();
@@ -32,7 +32,7 @@ namespace GildedRose.Tests
             var item = new Item { Name = itemName, Quality = 20, SellIn = sellin };
             var subject = new Program
             {
-                Items = new List<ItemWrapper> { new ItemWrapper(item) }
+                Items = new List<Item> { item }
             };
 
             subject.UpdateQuality();
@@ -53,7 +53,7 @@ namespace GildedRose.Tests
             };
             var subject = new Program
             {
-                Items = new List<ItemWrapper> { new ItemWrapper(item) }
+                Items = new List<Item> { item }
             };
 
             subject.UpdateQuality();
@@ -66,7 +66,7 @@ namespace GildedRose.Tests
             var item = new Item {Name = "+5 Dexterity Vest", Quality = 20, SellIn = 10};
             var subject = new Program
             {
-                Items = new List<ItemWrapper> { new ItemWrapper(item) }
+                Items = new List<Item> { item }
             };
 
             subject.UpdateQuality();
@@ -79,7 +79,7 @@ namespace GildedRose.Tests
             var item = new Item { Name = "+5 Dexterity Vest", Quality = 20, SellIn = 0 };
             var subject = new Program
             {
-                Items = new List<ItemWrapper> { new ItemWrapper(item) }
+                Items = new List<Item> { item }
             };
 
             subject.UpdateQuality();
@@ -92,7 +92,7 @@ namespace GildedRose.Tests
             var item = new Item { Name = "+5 Dexterity Vest", Quality = 0, SellIn = 0 };
             var subject = new Program
             {
-                Items = new List<ItemWrapper> { new ItemWrapper(item) }
+                Items = new List<Item> { item }
             };
 
             subject.UpdateQuality();
@@ -105,7 +105,7 @@ namespace GildedRose.Tests
             var item = new Item {Name = "Aged Brie", SellIn = 2, Quality = 0};
             var subject = new Program
             {
-                Items = new List<ItemWrapper> { new ItemWrapper(item) }
+                Items = new List<Item> { item }
             };
 
             subject.UpdateQuality();
@@ -119,7 +119,7 @@ namespace GildedRose.Tests
             var item = new Item { Name = "Aged Brie", SellIn = 2, Quality = 50 };
             var subject = new Program
             {
-                Items = new List<ItemWrapper> { new ItemWrapper(item) }
+                Items = new List<Item> { item }
             };
 
             subject.UpdateQuality();
@@ -132,7 +132,7 @@ namespace GildedRose.Tests
             var item = new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 5, Quality = 80 };
             var subject = new Program
             {
-                Items = new List<ItemWrapper> { new ItemWrapper(item) }
+                Items = new List<Item> { item }
             };
 
             subject.UpdateQuality();
