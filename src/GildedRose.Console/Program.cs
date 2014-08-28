@@ -5,28 +5,26 @@ namespace GildedRose.Console
     public class Program
     {
         public IList<Item> Items;
-        static void Main()
+
+        public static void Main()
         {
             System.Console.WriteLine("OMGHAI!");
 
             var app = new Program
+             {
+                Items = new List<Item>
                 {
-                              Items = new List<Item>
-                                          {
-                                              new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
-                                              new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
-                                              new Item {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7},
-                                              new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80},
-                                              new Item { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 15, Quality = 20 },
-                                              new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
-                                          }
-
-                          };
+                    new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
+                    new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
+                    new Item {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7},
+                    new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80},
+                    new Item { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 15, Quality = 20 },
+                    new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
+                }
+            };
 
             app.UpdateQuality();
-
             System.Console.ReadKey();
-
         }
 
         public void UpdateQuality()
@@ -68,12 +66,12 @@ namespace GildedRose.Console
         }
     }
 
-    public interface IReduceQuailityStrategy
+    public interface IQuailityStrategy
     {
         void UpdateQuality(Item item);
     }
 
-    public class PastSellinQualityDecreaseStrategy : IReduceQuailityStrategy
+    public class PastSellinQualityDecreaseStrategy : IQuailityStrategy
     {
         public void UpdateQuality(Item item)
         {
@@ -82,8 +80,7 @@ namespace GildedRose.Console
         }
     }
 
-
-    public class IncreaseQuailityWithAgeStrategy : IReduceQuailityStrategy
+    public class IncreaseQuailityWithAgeStrategy : IQuailityStrategy
     {
         public void UpdateQuality(Item item)
         {
@@ -92,7 +89,7 @@ namespace GildedRose.Console
         }
     }
 
-    public class BackstageReduceQuailityStrategy : IReduceQuailityStrategy
+    public class BackstageItemQuailityStrategy : IQuailityStrategy
     {
         public void UpdateQuality(Item item)
         {
@@ -110,7 +107,7 @@ namespace GildedRose.Console
         }
     }
 
-    class ConjuredReduceQuailityStrategy : IReduceQuailityStrategy
+    public class ConjuredItemQuailityStrategy : IQuailityStrategy
     {
         public void UpdateQuality(Item item)
         {
@@ -121,7 +118,7 @@ namespace GildedRose.Console
         }
     }
 
-    public class NeverDecreasingQuailityStrategy : IReduceQuailityStrategy
+    public class NeverDecreasingQuailityStrategy : IQuailityStrategy
     {
         public void UpdateQuality(Item item)
         {
@@ -129,7 +126,7 @@ namespace GildedRose.Console
         }
     }
 
-    public class StandardReduceQuailityStrategy : IReduceQuailityStrategy
+    public class StandardQuailityStrategy : IQuailityStrategy
     {
         public void UpdateQuality(Item item)
         {
@@ -145,24 +142,24 @@ namespace GildedRose.Console
 
     public class ItemWrapper
     {
-        private readonly IReduceQuailityStrategy _reduceQuailityStrategy;
+        private readonly IList<IQuailityStrategy> _quailityStrategy = new List<IQuailityStrategy>();
+
+        public Item Item { get; private set; }
 
         public ItemWrapper(Item item)
         {
             Item = item;
 
             if (item.Name == "Sulfuras, Hand of Ragnaros")
-                _reduceQuailityStrategy = new NeverDecreasingQuailityStrategy();
+                _quailityStrategy.Add(new NeverDecreasingQuailityStrategy());
             else if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
-                _reduceQuailityStrategy = new BackstageReduceQuailityStrategy();
+                _quailityStrategy.Add(new BackstageItemQuailityStrategy());
             else if (item.Name == "Aged Brie")
-                _reduceQuailityStrategy = new IncreaseQuailityWithAgeStrategy();
+                _quailityStrategy.Add(new IncreaseQuailityWithAgeStrategy());
             else if (item.Name.Contains("Conjured"))
-                _reduceQuailityStrategy = new ConjuredReduceQuailityStrategy();
+                _quailityStrategy.Add(new ConjuredItemQuailityStrategy());
             else
-                _reduceQuailityStrategy = new StandardReduceQuailityStrategy();
-            
-
+                _quailityStrategy.Add(new StandardQuailityStrategy());
         }
 
         public void ReduceSellin()
@@ -171,14 +168,12 @@ namespace GildedRose.Console
                 Item.SellIn -= 1;
         }
 
-        public Item Item { get; private set; }
-
         public void UpdateQuality()
         {
-            _reduceQuailityStrategy.UpdateQuality(Item);
+            foreach (var quailityStrategy in _quailityStrategy)
+                quailityStrategy.UpdateQuality(Item);
         }
     }
-
 
     public class Item
     {
