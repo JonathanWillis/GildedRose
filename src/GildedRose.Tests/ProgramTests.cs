@@ -7,6 +7,20 @@ namespace GildedRose.Tests
     [TestFixture]
     public class ProgramTests
     {
+
+        [Test]
+        public void ConjuredDegradesTwiceAsFast()
+        {
+            var item = new Item() { Name = "Conjured", Quality = 20, SellIn = 10 };
+            var subject = new Program
+            {
+                Items = new List<Item> { item }
+            };
+
+            subject.UpdateQuality();
+            Assert.That(item.Quality, Is.EqualTo(18));
+        }
+
         [TestCase("+5 Dexterity Vest", 10, 9)]
         [TestCase("Aged Brie", 10, 9)]
         [TestCase("Elixir of the Mongoose", 10, 9)]

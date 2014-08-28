@@ -46,6 +46,11 @@ namespace GildedRose.Console
                         {
                             Items[i].Quality = Items[i].Quality - 1;
                         }
+
+                        if (Items[i].Name == "Conjured")
+                        {
+                            Items[i].Quality = Items[i].Quality - 1;                            
+                        }
                     }
                 }
                 else
