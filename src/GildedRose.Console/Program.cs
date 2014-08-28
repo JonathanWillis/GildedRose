@@ -31,9 +31,8 @@ namespace GildedRose.Console
 
         public void UpdateQuality()
         {
-            for (var i = 0; i < Items.Count; i++)
+            foreach (var itemWrapper in Items)
             {
-                var itemWrapper = Items[i];
                 itemWrapper.ReduceSellin();
                 itemWrapper.UpdateQuality();
 
