@@ -11,10 +11,10 @@ namespace GildedRose.Tests
         [Test]
         public void ConjuredDegradesTwiceAsFast()
         {
-            var item = new Item() { Name = "Conjured", Quality = 20, SellIn = 10 };
+            var item = new Item { Name = "Conjured", Quality = 20, SellIn = 10 };
             var subject = new Program
             {
-                Items = new List<Item> { item }
+                Items = new List<ItemWrapper> { new ItemWrapper(item) }
             };
 
             subject.UpdateQuality();
@@ -29,10 +29,10 @@ namespace GildedRose.Tests
         [TestCase("Conjured Mana Cake", 10, 9)]
         public void WhenUpdatingTheSellinOfItemsIsReduced(string itemName, int sellin, int sellinAfter)
         {
-            var item = new Item() { Name = itemName, Quality = 20, SellIn = sellin };
+            var item = new Item { Name = itemName, Quality = 20, SellIn = sellin };
             var subject = new Program
             {
-                Items = new List<Item> { item }
+                Items = new List<ItemWrapper> { new ItemWrapper(item) }
             };
 
             subject.UpdateQuality();
@@ -45,15 +45,15 @@ namespace GildedRose.Tests
         [TestCase(0, 10, 0)]
         public void QuailityOfBackstagePassIncreasesByTwoWhen10DaysOrLess(int sellIn, int quality, int expectedQuality)
         {
-            var item = new Item()
-            {
+            var item = new Item
+                {
                 Name = "Backstage passes to a TAFKAL80ETC concert",
                 SellIn = sellIn,
                 Quality = quality
             };
             var subject = new Program
             {
-                Items = new List<Item> { item }
+                Items = new List<ItemWrapper> { new ItemWrapper(item) }
             };
 
             subject.UpdateQuality();
@@ -63,10 +63,10 @@ namespace GildedRose.Tests
         [Test]
         public void QuailityDegradesByOneWhenWithinTheSellinPeriod()
         {
-            var item = new Item() {Name = "+5 Dexterity Vest", Quality = 20, SellIn = 10};
+            var item = new Item {Name = "+5 Dexterity Vest", Quality = 20, SellIn = 10};
             var subject = new Program
             {
-                Items = new List<Item> { item }
+                Items = new List<ItemWrapper> { new ItemWrapper(item) }
             };
 
             subject.UpdateQuality();
@@ -76,10 +76,10 @@ namespace GildedRose.Tests
         [Test]
         public void QuailityDegradesByTwoWhenPastTheSellinPeriod()
         {
-            var item = new Item() { Name = "+5 Dexterity Vest", Quality = 20, SellIn = 0 };
+            var item = new Item { Name = "+5 Dexterity Vest", Quality = 20, SellIn = 0 };
             var subject = new Program
             {
-                Items = new List<Item> { item }
+                Items = new List<ItemWrapper> { new ItemWrapper(item) }
             };
 
             subject.UpdateQuality();
@@ -89,10 +89,10 @@ namespace GildedRose.Tests
         [Test]
         public void QuailityOfAnItemIsNeverNegative()
         {
-            var item = new Item() { Name = "+5 Dexterity Vest", Quality = 0, SellIn = 0 };
+            var item = new Item { Name = "+5 Dexterity Vest", Quality = 0, SellIn = 0 };
             var subject = new Program
             {
-                Items = new List<Item> { item }
+                Items = new List<ItemWrapper> { new ItemWrapper(item) }
             };
 
             subject.UpdateQuality();
@@ -102,10 +102,10 @@ namespace GildedRose.Tests
         [Test]
         public void QuailityOfBrieIncreasesWithAge()
         {
-            var item = new Item() {Name = "Aged Brie", SellIn = 2, Quality = 0};
+            var item = new Item {Name = "Aged Brie", SellIn = 2, Quality = 0};
             var subject = new Program
             {
-                Items = new List<Item> { item }
+                Items = new List<ItemWrapper> { new ItemWrapper(item) }
             };
 
             subject.UpdateQuality();
@@ -116,10 +116,10 @@ namespace GildedRose.Tests
         [Test]
         public void QuailityCanNeverBeMoreThanFifty()
         {
-            var item = new Item() { Name = "Aged Brie", SellIn = 2, Quality = 50 };
+            var item = new Item { Name = "Aged Brie", SellIn = 2, Quality = 50 };
             var subject = new Program
             {
-                Items = new List<Item> { item }
+                Items = new List<ItemWrapper> { new ItemWrapper(item) }
             };
 
             subject.UpdateQuality();
@@ -129,10 +129,10 @@ namespace GildedRose.Tests
         [Test]
         public void QuailityOfSulfurasNeverDecreases()
         {
-            var item = new Item() { Name = "Sulfuras, Hand of Ragnaros", SellIn = 5, Quality = 80 };
+            var item = new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 5, Quality = 80 };
             var subject = new Program
             {
-                Items = new List<Item> { item }
+                Items = new List<ItemWrapper> { new ItemWrapper(item) }
             };
 
             subject.UpdateQuality();

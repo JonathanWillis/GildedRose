@@ -4,26 +4,21 @@ namespace GildedRose.Console
 {
     public class Program
     {
-        public IList<Item> Items;
-        static void Main(string[] args)
+        public IList<ItemWrapper> Items;
+        static void Main()
         {
             System.Console.WriteLine("OMGHAI!");
 
-            var app = new Program()
-                          {
-                              Items = new List<Item>
+            var app = new Program
+                {
+                              Items = new List<ItemWrapper>
                                           {
-                                              new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
-                                              new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
-                                              new Item {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7},
-                                              new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80},
-                                              new Item
-                                                  {
-                                                      Name = "Backstage passes to a TAFKAL80ETC concert",
-                                                      SellIn = 15,
-                                                      Quality = 20
-                                                  },
-                                              new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
+                                              new ItemWrapper(new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20}),
+                                              new ItemWrapper(new Item {Name = "Aged Brie", SellIn = 2, Quality = 0}),
+                                              new ItemWrapper(new Item {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7}),
+                                              new ItemWrapper(new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80}),
+                                              new ItemWrapper(new Item { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 15, Quality = 20 }),
+                                              new ItemWrapper(new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6})
                                           }
 
                           };
@@ -38,84 +33,141 @@ namespace GildedRose.Console
         {
             for (var i = 0; i < Items.Count; i++)
             {
-                if (Items[i].Name != "Aged Brie" && Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
+                var itemWrapper = Items[i];
+                itemWrapper.ReduceSellin();
+                itemWrapper.UpdateQuality();
+
+                var item = itemWrapper.Item;
+                if (item.SellIn < 0)
                 {
-                    if (Items[i].Quality > 0)
+                    if (item.Name != "Aged Brie")
                     {
-                        if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
+                        if (item.Name != "Backstage passes to a TAFKAL80ETC concert")
                         {
-                            Items[i].Quality = Items[i].Quality - 1;
-                        }
-
-                        if (Items[i].Name == "Conjured")
-                        {
-                            Items[i].Quality = Items[i].Quality - 1;                            
-                        }
-                    }
-                }
-                else
-                {
-                    if (Items[i].Quality < 50)
-                    {
-                        Items[i].Quality = Items[i].Quality + 1;
-
-                        if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
-                        {
-                            if (Items[i].SellIn < 11)
+                            if (item.Quality > 0)
                             {
-                                if (Items[i].Quality < 50)
+                                if (item.Name != "Sulfuras, Hand of Ragnaros")
                                 {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-
-                            if (Items[i].SellIn < 6)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                {
-                    Items[i].SellIn = Items[i].SellIn - 1;
-                }
-
-                if (Items[i].SellIn < 0)
-                {
-                    if (Items[i].Name != "Aged Brie")
-                    {
-                        if (Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-                        {
-                            if (Items[i].Quality > 0)
-                            {
-                                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                                {
-                                    Items[i].Quality = Items[i].Quality - 1;
+                                    item.Quality = item.Quality - 1;
                                 }
                             }
                         }
                         else
                         {
-                            Items[i].Quality = Items[i].Quality - Items[i].Quality;
+                            item.Quality = item.Quality - item.Quality;
                         }
                     }
                     else
                     {
-                        if (Items[i].Quality < 50)
+                        if (item.Quality < 50)
                         {
-                            Items[i].Quality = Items[i].Quality + 1;
+                            item.Quality = item.Quality + 1;
                         }
                     }
                 }
             }
         }
-
     }
+
+    public interface IReduceQuailityStrategy
+    {
+        void UpdateQuality(Item item);
+    }
+
+    public class IncreaseQuailityWithAgeStrategy : IReduceQuailityStrategy
+    {
+        public void UpdateQuality(Item item)
+        {
+            if (item.Quality < 50)
+                item.Quality += 1;
+        }
+    }
+
+    public class BackstageReduceQuailityStrategy : IReduceQuailityStrategy
+    {
+        public void UpdateQuality(Item item)
+        {
+            if (item.Quality < 50)
+            {
+                if (item.SellIn <= 0)
+                    item.Quality = 0;
+                else if (item.SellIn <= 5)
+                    item.Quality += 3;
+                else if (item.SellIn <= 10)
+                    item.Quality += 2;
+                else
+                    item.Quality += 1;
+            }
+        }
+    }
+
+    class ConjuredReduceQuailityStrategy : IReduceQuailityStrategy
+    {
+        public void UpdateQuality(Item item)
+        {
+            if (item.Quality > 0)
+            {
+                item.Quality -= 2;
+            }
+        }
+    }
+
+    public class NeverDecreasingQuailityStrategy : IReduceQuailityStrategy
+    {
+        public void UpdateQuality(Item item)
+        {
+            //Do Nothing
+        }
+    }
+
+    public class StandardReduceQuailityStrategy : IReduceQuailityStrategy
+    {
+        public void UpdateQuality(Item item)
+        {
+            if (item.Quality > 0)
+            {
+                if (item.SellIn == 0)
+                    item.Quality -= 2;
+                else
+                    item.Quality -= 1;
+            }
+        }
+    }
+
+    public class ItemWrapper
+    {
+        private readonly IReduceQuailityStrategy _reduceQuailityStrategy;
+
+        public ItemWrapper(Item item)
+        {
+            Item = item;
+
+            if (item.Name == "Sulfuras, Hand of Ragnaros")
+                _reduceQuailityStrategy = new NeverDecreasingQuailityStrategy();
+            else if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
+                _reduceQuailityStrategy = new BackstageReduceQuailityStrategy();
+            else if (item.Name == "Aged Brie")
+                _reduceQuailityStrategy = new IncreaseQuailityWithAgeStrategy();
+            else if (item.Name.Contains("Conjured"))
+                _reduceQuailityStrategy = new ConjuredReduceQuailityStrategy();
+            else
+                _reduceQuailityStrategy = new StandardReduceQuailityStrategy();
+        }
+
+        public void ReduceSellin()
+        {
+            if (Item.Name != "Sulfuras, Hand of Ragnaros")
+                Item.SellIn -= 1;
+        }
+
+        public Item Item { get; private set; }
+
+        public void UpdateQuality()
+        {
+            _reduceQuailityStrategy.UpdateQuality(Item);
+        }
+    }
+
 
     public class Item
     {
